@@ -3,6 +3,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const path = require('path');
+const encryption = require("mongoose-encryption")
 
 // Set up express app
 const app = express();
@@ -25,17 +26,30 @@ mongoose.connect('mongodb://localhost/userDB', { useNewUrlParser: true, useUnifi
   .catch(err => console.log(err));
 
  
-  const signupSchema = {
+  const signupSchema = new mongoose.Schema({
     username: {
         type: String
       },
       password: {
         type: String
         }
-    }
+    })
   ;
 
-  const User = mongoose.model('User', signupSchema);
+  //model encryption
+
+const secret = "mylittlesecret" ;
+
+signupSchema.plugin(encryption, {secret:secret ,encryptedFields: ['password']})
+
+
+
+//making collection
+const User = mongoose.model('User', signupSchema);
+
+
+
+
 
 
   //home route
