@@ -1,4 +1,5 @@
 // Import dependencies
+require('dotenv').config()
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
@@ -38,7 +39,7 @@ mongoose.connect('mongodb://localhost/userDB', { useNewUrlParser: true, useUnifi
 
   //model encryption
 
-const secret = "mylittlesecret" ;
+const secret = process.env.SECRET ;
 
 signupSchema.plugin(encryption, {secret:secret ,encryptedFields: ['password']})
 
