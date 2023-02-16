@@ -4,7 +4,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const path = require('path');
-const encryption = require("mongoose-encryption")
+// const encryption = require("mongoose-encryption")
+const md5 = require('md5');
 
 // Set up express app
 const app = express();
@@ -39,18 +40,14 @@ mongoose.connect('mongodb://localhost/userDB', { useNewUrlParser: true, useUnifi
 
   //model encryption
 
-const secret = process.env.SECRET ;
+// const secret = process.env.SECRET ;
 
-signupSchema.plugin(encryption, {secret:secret ,encryptedFields: ['password']})
+// signupSchema.plugin(encryption, {secret:secret ,encryptedFields: ['password']})
 
 
 
 //making collection
 const User = mongoose.model('User', signupSchema);
-
-
-
-
 
 
   //home route
@@ -72,7 +69,7 @@ app
 .post((req,res)=>{
   const userData01 = new User(
     { username: req.body.username,
-     password: req.body.password
+     password: md5(req.body.password)
    }) 
   userData01.save((err)=>{
     if(err){
@@ -96,7 +93,7 @@ app
     if(err){
       console.log(err);
     }else{
-      if(foundUser.password === req.body.password){
+      if(foundUser.password === md5(req.body.password)){
         res.render("secrets")
       }else(
         res.send("not matching password")
